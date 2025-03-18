@@ -4,6 +4,7 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const navigate = useNavigate();
+  
   return (
     <nav class={`bg-white border-gray-200 dark:bg-gray-900`}>
       <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -95,7 +96,17 @@ const Navbar = () => {
                 Contact
               </a>
             </li>
-            {localStorage.token ?<Button className="rounded-full bg-white-500" onClick={()=>navigate('/profiledetails')} sx={{width:30,height:40}}>PM</Button> : <Button onClick={()=> navigate('/auth')}>Signin</Button>}
+            {localStorage.token ? (
+              <Button
+                className="rounded-full bg-white-500"
+                onClick={() => navigate("/profiledetails")}
+                sx={{ width: 30, height: 40 }}
+              >
+                PM
+              </Button>
+            ) : (
+              <Button onClick={() => navigate("/auth")}>Signin</Button>
+            )}
           </ul>
         </div>
       </div>

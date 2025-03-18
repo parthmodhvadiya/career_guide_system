@@ -11,7 +11,8 @@ const Auth = () => {
   // Function to store token and set a timeout to delete it after 2 hours
   const storeTokenWithExpiry = (token) => {
     localStorage.setItem('token', token); // Store the token in localStorage
-    const expiryTime = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+    // const expiryTime = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+    const expiryTime = 60*1000;
     setTimeout(() => {
       localStorage.removeItem('token'); // Remove the token after 2 hours
       alert("Your session has expired. Please log in again.");

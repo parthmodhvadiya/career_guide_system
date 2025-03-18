@@ -3,12 +3,13 @@ import axios from "axios";
 import JobDetails from "./JobDetails";
 import Pagination from "./Pagination";
 import { Grid2 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
   const [nextPage, setNextPage] = useState(null);
   const [prevPage, setPrevPage] = useState(null);
-
+  const navigate = useNavigate();
   const fetchJobs = async (url = "http://localhost:5000/api/jobs") => {
     try {
       const response = await axios.get(url);
@@ -22,14 +23,17 @@ const Jobs = () => {
 
   useEffect(() => {
     fetchJobs();
+    if(localStorage.token==undefined)
+      {
+        navigate('/auth')
+      }
   }, []);
-
   const handlePageChange = (url) => {
     fetchJobs(url);
   };
-
+  console.log(localStorage.token)
   return (
-    <div className="xs-px-5 px-20">
+    <>{ localStorage.token==undefined ? navigate("/auth"): <div className="xs-px-5 px-20">
     <h1 className="text-3xl font-bold text-center text-gray-800 my-8">
         Job Opportunities
       </h1>
@@ -48,7 +52,9 @@ const Jobs = () => {
           previous={prevPage}
           onPageChange={handlePageChange}
         />
-    </div>
+    </div>}
+    </>
+   
   );
 };
 

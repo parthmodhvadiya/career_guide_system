@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-
-const Quiz = () => {  
+import {Button} from '@mui/material';
+import { useEffect } from 'react';
+const Quiz = () => {
   const location = useLocation();
   const params= location.pathname.split('/');
   const quizType = params[params.length-1];;
-  console.log();
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
-
+  useEffect(() => {
+    if(localStorage.token==undefined)
+    {
+      navigate('/auth')
+    }
+  }, [])
+  
   const quizQuestions = {
     aptitude: [
       {
@@ -70,8 +76,8 @@ const Quiz = () => {
       setShowScore(true);
     }
   };
-
   return (
+ 
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
       {showScore ? (
         <div className="bg-white p-8 rounded-lg shadow-lg text-center">
@@ -79,6 +85,16 @@ const Quiz = () => {
           <p className="text-gray-600">
             You scored {score} out of {questions.length}
           </p>
+          <Button
+          variant="contained"
+          color="success"
+          onClick={()=>navigate('/quiz')}
+          target="_blank"
+          rel="noopener noreferrer"
+          sx={{marginTop:3}}
+        >
+          Done
+        </Button>
         </div>
       ) : (
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">

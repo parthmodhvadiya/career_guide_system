@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import Navbar from "./components/customer/Navbar";
 import Home from './components/customer/Home';
 import Jobs from "./components/customer/JobPage/Jobs";
@@ -16,18 +16,23 @@ import UserProfileDisplay from "./components/customer/UserProfileDisplay";
 // import ResumeBuilder from "./components/ResumeBuilder";
 
 const App = () => {
+  const expiryTime = 60*1000;
+  setTimeout(() => {
+    localStorage.removeItem("token"); // Remove the token after 2 hours
+  }, expiryTime);
   
   return (
     <Router>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home/>}/>
-        <Route path="/jobs" element={<Jobs/>}/>
-        <Route path="/quiz" element={<Quizpage/>}/>
-        <Route path="/quiz/:quizname" element={<Quiz />}/>
-        <Route path="/auth" element={<Auth/>}/>
-        <Route path="/profile" element={<UserProfile/>}/>
-        <Route path="/profiledetails" element={<UserProfileDisplay/>}/>
+          <Route path="/jobs" element={<Jobs/>}/>
+          <Route path="/quiz" element={<Quizpage/>}/>
+          <Route path="/quiz/:quizname" element={<Quiz />}/>
+          <Route path="/auth" element={<Auth/>}/>
+          <Route path="/profile" element={<UserProfile/>}/>
+          <Route path="/profiledetails" element={<UserProfileDisplay/>}/>
+        
         {/* <Route path="/" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/quiz" element={<Quiz />} />

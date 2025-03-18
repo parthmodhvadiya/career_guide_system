@@ -1,3 +1,4 @@
+import { LocalFireDepartment } from '@mui/icons-material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,7 +23,7 @@ const Quizpage = () => {
   const handleTakeQuiz = (quizType) => {
     navigate(`/quiz/${quizType}`);
   };
-
+  console.log(localStorage.token);
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
       <h1 className="text-4xl font-bold text-gray-800 mb-8">Choose Your Quiz</h1>
