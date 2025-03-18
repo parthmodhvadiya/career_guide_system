@@ -59,7 +59,7 @@ const Quizpage = () => {
             </h2>
             <p className="text-gray-600 mb-6">{quiz.description}</p>
             <button
-              onClick={() => handleTakeQuiz(quiz.type)}
+              onClick={() => handleTakeQuiz(quiz.label)}
               className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
             >
               Give Test
