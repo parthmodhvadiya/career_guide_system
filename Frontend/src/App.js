@@ -7,31 +7,39 @@ import Quizpage from './components/customer/QuizPage/Quizpage';
 import Quiz  from "./components/customer/QuizPage/Quiz";
 import Auth from "./components/customer/Auth";
 import UserProfile from "./components/customer/UserProfile";
+import { useState } from "react";
 import UserProfileDisplay from "./components/customer/UserProfileDisplay";
-// import Auth from "./components/Auth";
 // import Dashboard from "./components/Dashboard";
-// import Quiz from "./components/Quiz";
 // import Chatbot from "./components/Chatbot";
 // import JobListings from "./components/JobListings";
 // import ResumeBuilder from "./components/ResumeBuilder";
 
 const App = () => {
-  const expiryTime = 60*1000;
+  const expiryTime = 2*60*60*1000;
   setTimeout(() => {
     localStorage.removeItem("token"); // Remove the token after 2 hours
   }, expiryTime);
-  
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phone: "",
+    dob: "",
+    gender: "",
+    city: "",
+    state: "",
+    country: "",
+    skills: ""
+  });
   return (
     <Router>
-      <Navbar />
+      <Navbar name={formData.fullName}/>
       <Routes>
         <Route path="/" element={<Home/>}/>
           <Route path="/jobs" element={<Jobs/>}/>
           <Route path="/quiz" element={<Quizpage/>}/>
           <Route path="/quiz/:quizname" element={<Quiz />}/>
-          <Route path="/auth" element={<Auth/>}/>
-          <Route path="/profile" element={<UserProfile/>}/>
-          <Route path="/profiledetails" element={<UserProfileDisplay/>}/>
+          <Route path="/auth" element={<Auth setFormData={setFormData}/>}/>
+          <Route path="/profile" element={<UserProfile />}/>
+          <Route path="/profiledetails" element={<UserProfileDisplay user={formData.profile}/>}/>
         
         {/* <Route path="/" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />

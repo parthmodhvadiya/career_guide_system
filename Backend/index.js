@@ -1,12 +1,19 @@
 const express = require("express");
 const axios = require("axios");
+const router = express.Router();
 const cors = require("cors");
+const { saveProfile } = require("./routes/saveProfile");
+const {authenticate} = require('./middleware/authenticate');
+const { getProfileDetails } = require("./routes/getProfileDetails");
+const { uploadQuiz, getQuizList,getQuestions } = require("./routes/quiz.route");
+const connectDB = require("./config/db.config");
 
 const app = express();
 const PORT = 5000;
-
+connectDB();
+app.use(express.json());
 app.use(cors());
-
+app.use(router);
 app.get("/api/jobs", async (req, res) => {
   try {
     const response = await axios.get("https://findwork.dev/api/jobs/", {
@@ -20,6 +27,11 @@ app.get("/api/jobs", async (req, res) => {
   }
 });
 
+app.post('/saveprofile',authenticate,saveProfile);
+app.get('/getprofiledetails',authenticate,getProfileDetails);
+app.post('/uploadquizzes',authenticate,uploadQuiz)
+app.get('/quiz',authenticate,getQuizList);
+app.get('/quiz/:name',authenticate,getQuestions)
 app.listen(PORT, () => {
   console.log(`Proxy server running on http://localhost:${PORT}`);
 });

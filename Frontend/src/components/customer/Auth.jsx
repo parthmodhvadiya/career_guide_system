@@ -2,30 +2,21 @@ import React, { useState } from "react";
 import { auth, googleProvider } from "../../firebase/firebase";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-
-const Auth = () => {
+import {Button} from '@mui/material';
+const Auth = ({setFormData}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [Login,setLogin] = useState(true);
+  
   const navigate = useNavigate();
-
-  // Function to store token and set a timeout to delete it after 2 hours
-  const storeTokenWithExpiry = (token) => {
-    localStorage.setItem('token', token); // Store the token in localStorage
-    // const expiryTime = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
-    const expiryTime = 60*1000;
-    setTimeout(() => {
-      localStorage.removeItem('token'); // Remove the token after 2 hours
-      alert("Your session has expired. Please log in again.");
-      navigate('/auth'); // Redirect to the login page
-    }, expiryTime);
-  };
-
+  
   const handleLogin = async () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const idToken = await user.getIdToken();
-      storeTokenWithExpiry(idToken); // Store token with expiry
+      localStorage.setItem('token', idToken);
+      console.log(idToken);
       navigate('/');
       alert("Logged in successfully!");
     } catch (error) {
@@ -38,7 +29,7 @@ const Auth = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const idToken = await user.getIdToken();
-      storeTokenWithExpiry(idToken); // Store token with expiry
+      localStorage.setItem('token', idToken);
       navigate('/profile');
       alert("Signed up successfully!");
     } catch (error) {
@@ -51,7 +42,8 @@ const Auth = () => {
       const userCredential = await signInWithPopup(auth, googleProvider);
       const user = userCredential.user;
       const idToken = await user.getIdToken();
-      storeTokenWithExpiry(idToken); // Store token with expiry
+      localStorage.setItem('token', idToken);
+      console.log(idToken);
       navigate('/');
       alert("Logged in with Google!");
     } catch (error) {
@@ -62,7 +54,7 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Sign Up / Login</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">{Login?"Login":"SignUp"}</h2>
         <div className="space-y-4">
           <input
             type="email"
@@ -78,18 +70,18 @@ const Auth = () => {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button
+          {Login?<button
             onClick={handleLogin}
             className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
           >
             Login
-          </button>
+          </button>:
           <button
             onClick={handleSignUp}
             className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-300"
           >
             Sign Up
-          </button>
+          </button>}
           <button
             onClick={handleGoogleLogin}
             className="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-300 flex items-center justify-center"
@@ -104,6 +96,9 @@ const Auth = () => {
             </svg>
             Login with Google
           </button>
+          {!Login?
+          <p className="justify-center items-center">If You have account? <Button onClick={()=>setLogin(true)}>Login</Button></p>
+          :<p>If You don't have account? <Button onClick={()=>setLogin(false)}>SignUp</Button></p>}
         </div>
       </div>
     </div>

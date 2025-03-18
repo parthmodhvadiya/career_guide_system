@@ -2,9 +2,8 @@ import React from "react";
 import { Brightness4, Brightness7 } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-const Navbar = () => {
+const Navbar = ({name}) => {
   const navigate = useNavigate();
-  
   return (
     <nav class={`bg-white border-gray-200 dark:bg-gray-900`}>
       <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
