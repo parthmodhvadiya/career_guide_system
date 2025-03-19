@@ -16,7 +16,6 @@ const UserProfileDisplay = () => {
           navigate("/auth");
           return;
         }
-
         const response = await fetch("http://localhost:5000/getprofiledetails", {
           method: "GET",
           headers: {
@@ -24,10 +23,15 @@ const UserProfileDisplay = () => {
             authorization: `Bearer ${token}`, // Attach token
           },
         });
-
-        if (!response.ok) throw new Error("Failed to fetch user profiles");
+        if (!response.ok){
+          throw new Error("Failed to fetch user profiles")};
 
         const data = await response.json();
+        console.log(data);
+        if(data.message==='User Details Not Founded')
+        {
+          navigate('/profile')
+        }
         setUser(data); // ✅ Ensure backend returns a valid user object
       } catch (err) {
         setError(err.message);

@@ -27,13 +27,13 @@ const UserProfile = () => {
           "Content-Type": "application/json",
           "authorization": `Bearer ${token}`, // Attach token
       },
-      body: JSON.stringify({ formData }),
+      body: JSON.stringify({ formData }), 
   });
-  navigate('/profiledetails');
+  navigate('/');
   };
 
   return (
-    <div className="container min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="container min-h-screen m-auto flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full mx-5">
         <h2 className="text-2xl font-semibold text-center mb-6">Create Profile</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
