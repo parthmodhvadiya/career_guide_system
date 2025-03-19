@@ -4,16 +4,22 @@ const User = require('../model/user.model');
 const getProfileDetails = async (req,res)=>
 {
     const email = req.userEmail;
+    const user = await getUserIdformEMail(email);
+    res.status(200).send(user);
+}
+
+const getUserIdformEMail = async(email)=>
+{
     try {
         const user = await User.findOne({email:email});
         if(!user)
         {
-            res.status(404).send({"message":"User Details Not Founded"});
+            return {"message":"User Details Not Founded"};
         }
-        res.status(200).send(user);
+        return user;
     } catch (error) {
-        res.status(500).send({error:error.message})
+        return {error:error.message};
     }
 }
 
-module.exports = {getProfileDetails};
+module.exports = {getProfileDetails,getUserIdformEMail};

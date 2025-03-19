@@ -68,4 +68,6 @@ async function uploadQuiz(req,res) {
       res.status(500).send({error:error.message});
     }
   }
+
+  
   module.exports = {uploadQuiz,getQuizList,getQuestions};

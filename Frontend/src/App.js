@@ -7,17 +7,42 @@ import Quizpage from './components/customer/QuizPage/Quizpage';
 import Quiz  from "./components/customer/QuizPage/Quiz";
 import Auth from "./components/customer/Auth";
 import UserProfile from "./components/customer/Profile/UserProfile";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserProfileDisplay from "./components/customer/Profile/UserProfileDisplay";
 // import Dashboard from "./components/Dashboard";
 // import Chatbot from "./components/Chatbot";
 // import JobListings from "./components/JobListings";
 // import ResumeBuilder from "./components/ResumeBuilder";
+import CareerQuizForm from "./components/customer/CareerForm/CareerQuizForm";
+import AboutPage  from "./components/customer/About";
+import Chatbot from './components/customer/Chatbot';
 
 const App = () => {
   const expiryTime = 2*60*60*1000;
+  useEffect(() => {
+    function isTokenValid(token) {
+      try {
+          const base64Url = token.split('.')[1]; // Get payload
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = JSON.parse(atob(base64));
+  
+          const now = Math.floor(Date.now() / 1000); // Current time in seconds
+          return jsonPayload.exp > now; // Check expiry
+      } catch (error) {
+          return false; // Invalid token
+      }
+  }
+  
+  const token = localStorage.token;
+  if(!isTokenValid(token))
+  {
+    localStorage.removeItem("token"); 
+  }
+  }, [])
+  
   setTimeout(() => {
-    localStorage.removeItem("token"); // Remove the token after 2 hours
+    
+    localStorage.removeItem("token"); 
   }, expiryTime);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -40,11 +65,12 @@ const App = () => {
           <Route path="/auth" element={<Auth setFormData={setFormData}/>}/>
           <Route path="/profile" element={<UserProfile />}/>
           <Route path="/profiledetails" element={<UserProfileDisplay user={formData.profile}/>}/>
-        
+        <Route path='/about' element={<AboutPage/>}/>
+        <Route path="/chatbot" element={<Chatbot />} />
+        <Route path='/careerquiz' element={<CareerQuizForm/>}/>
         {/* <Route path="/" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/quiz" element={<Quiz />} />
-        <Route path="/chatbot" element={<Chatbot />} />
         <Route path="/jobs" element={<JobListings />} />
         <Route path="/resume" element={<ResumeBuilder />} /> */}
       </Routes>

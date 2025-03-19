@@ -1,40 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Button, CircularProgress } from '@mui/material';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Button, CircularProgress } from "@mui/material";
 
 const Quiz = () => {
   const location = useLocation();
-  const params = location.pathname.split('/');
-  const quizType = params[params.length - 1]; 
+  const params = location.pathname.split("/");
+  const quizType = params[params.length - 1];
   const navigate = useNavigate();
-
   const [quizData, setQuizData] = useState(null);
+  const [zero, setzero] = useState(true)
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const handleQuizSubmit = async () => {
+    try {
+      // console.log(score);
+      const token = localStorage.token;
+      let percent =0;
+      if(!zero)
+      {
+        percent = ((score+1) * 100) / quizData.quizquestion.length;
+      }
+      // console.log(percent);
+      const response = await fetch(`http://localhost:5000/quiz/${quizType}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`, // Attach token
+        },
+        body: JSON.stringify({ score: percent }),
+      });
+      console.log(await response.json());
+    } catch (error) {
+      throw new Error("Failed to fetch quiz data");
+    }
+  };
   useEffect(() => {
     // Fetch quiz data from backend
     const fetchQuizData = async () => {
       const token = localStorage.token;
-      if(!token)
-      {
-        navigate('/auth');
+      if (!token) {
+        navigate("/auth");
       }
       try {
-        const response = await fetch(`http://localhost:5000/quiz/${quizType}`,
-          {
-            method: "GET",
+        const response = await fetch(`http://localhost:5000/quiz/${quizType}`, {
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
             authorization: `Bearer ${token}`, // Attach token
           },
-          }
-        );
+        });
         if (!response.ok) {
-          throw new Error('Failed to fetch quiz data');
+          throw new Error("Failed to fetch quiz data");
         }
         const data = await response.json();
         setQuizData(data);
@@ -64,12 +84,24 @@ const Quiz = () => {
     );
   }
 
-  if (!quizData || !quizData.quizquestion || quizData.quizquestion.length === 0) {
+  if (
+    !quizData ||
+    !quizData.quizquestion ||
+    quizData.quizquestion.length === 0
+  ) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <h2 className="text-2xl font-bold text-gray-800">No Questions Available</h2>
-        <p className="text-gray-600">Please check back later or select another quiz.</p>
-        <Button variant="contained" color="primary" onClick={() => navigate('/')}>
+        <h2 className="text-2xl font-bold text-gray-800">
+          No Questions Available
+        </h2>
+        <p className="text-gray-600">
+          Please check back later or select another quiz.
+        </p>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("/")}
+        >
           Go Back
         </Button>
       </div>
@@ -78,15 +110,17 @@ const Quiz = () => {
 
   const questions = quizData.quizquestion;
 
-  const handleAnswerOptionClick = (selectedAnswer) => {
+  const handleAnswerOptionClick = async (selectedAnswer) => {
     if (selectedAnswer === questions[currentQuestion].answer) {
-      setScore(score + 1);
+      setzero(false);
+      setScore(score+1);
     }
 
     const nextQuestion = currentQuestion + 1;
     if (nextQuestion < questions.length) {
       setCurrentQuestion(nextQuestion);
     } else {
+      handleQuizSubmit();
       setShowScore(true);
     }
   };
@@ -95,14 +129,16 @@ const Quiz = () => {
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
       {showScore ? (
         <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Quiz Completed!</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Quiz Completed!
+          </h2>
           <p className="text-gray-600">
             You scored {score} out of {questions.length}
           </p>
           <Button
             variant="contained"
             color="success"
-            onClick={() => navigate('/quiz')}
+            onClick={() => navigate("/quiz")}
             sx={{ marginTop: 3 }}
           >
             Done
