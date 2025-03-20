@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: career-guide-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./build
+    envVars:
+      - key: http://localhost:5000
+        value: https://career-guide-backend.onrender.com
