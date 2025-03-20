@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: career-guide-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: "mongodb+srv://parthmodhvadiya15:VIFgrhlAhPbsz0WQ@cluster0.str14.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: PORT
+        value: 10000
