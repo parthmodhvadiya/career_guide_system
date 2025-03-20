@@ -5,13 +5,13 @@ const getProfileDetails = async (req,res)=>
 {
     const email = req.userEmail;
     const user = await getUserIdformEMail(email);
-    res.status(200).send(user);
+    return res.status(200).send(user);
 }
 
 const getUserIdformEMail = async(email)=>
 {
     try {
-        const user = await User.findOne({email:email});
+        const user = await User.findOne({email});
         if(!user)
         {
             return {"message":"User Details Not Founded"};

@@ -16,6 +16,7 @@ import UserProfileDisplay from "./components/customer/Profile/UserProfileDisplay
 import CareerQuizForm from "./components/customer/CareerForm/CareerQuizForm";
 import AboutPage  from "./components/customer/About";
 import Chatbot from './components/customer/Chatbot';
+import QuizResults from './components/customer/Marks';
 
 const App = () => {
   const expiryTime = 2*60*60*1000;
@@ -68,6 +69,7 @@ const App = () => {
         <Route path='/about' element={<AboutPage/>}/>
         <Route path="/chatbot" element={<Chatbot />} />
         <Route path='/careerquiz' element={<CareerQuizForm/>}/>
+        <Route path='/marks' element={<QuizResults/>}/>
         {/* <Route path="/" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/quiz" element={<Quiz />} />

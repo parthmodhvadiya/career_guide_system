@@ -8,6 +8,7 @@ const { getProfileDetails } = require("./routes/getProfileDetails");
 const { uploadQuiz, getQuizList,getQuestions } = require("./routes/quiz.route");
 const connectDB = require("./config/db.config");
 const { saveScore, personalityQuiz } = require("./routes/saveMark.route");
+const {getScore} = require('./routes/getScore.route');
 
 const app = express();
 const PORT = 5000;
@@ -34,7 +35,8 @@ app.post('/uploadquizzes',authenticate,uploadQuiz)
 app.get('/quiz',authenticate,getQuizList);
 app.get('/quiz/:name',authenticate,getQuestions);
 app.post('/quiz/:quiztype',authenticate,saveScore);
-app.post('/personal',authenticate,personalityQuiz)
+app.post('/personal',authenticate,personalityQuiz);
+app.get('/getscore',authenticate,getScore);
 app.listen(PORT, () => {
   console.log(`Proxy server running on http://localhost:${PORT}`);
 });

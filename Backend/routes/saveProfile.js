@@ -29,10 +29,10 @@ const saveProfile = async (req, res) => {
 
         // Save user to database
         await newUser.save();
-        res.status(201).json({ message: "Profile saved successfully!", user: newUser });
+        return res.status(201).json({ message: "Profile saved successfully!", user: newUser });
     } catch (error) {
         console.error("Error saving profile:", error);
-        res.status(500).json({ message: "Internal Server Error", error });
+        return res.status(500).json({ message: "Internal Server Error", error });
     }
 };
 
