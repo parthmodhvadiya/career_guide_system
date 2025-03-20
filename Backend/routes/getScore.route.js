@@ -1,11 +1,12 @@
-const userQuiz = require('../model/userQuiz.model');
+const UserQuiz = require('../model/userQuiz.model');
 const User = require('../model/user.model');
 
 async function getScore(req,res) {
-    const email = req.email;
+    const email = req.userEmail;
     try {
-        const user = await User.findOne(email);
-        const userScore = await userQuiz.findOne({userID:user._id});
+        const user = await User.findOne({email:email});
+        console.log(user);
+        const userScore = await UserQuiz.findOne({userID:user._id});
         if(!userScore)
         {
             return res.send({message:"User Score Not Found"});

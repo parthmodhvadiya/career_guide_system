@@ -3,20 +3,20 @@ const mongoose = require('mongoose');
 const userQuizSchema = new mongoose.Schema({
     userID: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     scores: {
-      os: { type: Number, default: 0 }, // Operating Systems
-      algo: { type: Number, default: 0 }, // Algorithms
-      pc: { type: Number, default: 0 }, // Programming Concepts
-      se: { type: Number, default: 0 }, // Software Engineering
-      cn: { type: Number, default: 0 }, // Computer Networks
-      es: { type: Number, default: 0 }, // Electronics Subjects
-      ca: { type: Number, default: 0 }, // Computer Architecture
-      math: { type: Number, default: 0 }, // Mathematics
+      os: { type: Number,   }, // Operating Systems
+      algo: { type: Number,   }, // Algorithms
+      pc: { type: Number,   }, // Programming Concepts
+      se: { type: Number,   }, // Software Engineering
+      cn: { type: Number,   }, // Computer Networks
+      es: { type: Number,   }, // Electronics Subjects
+      ca: { type: Number,   }, // Computer Architecture
+      math: { type: Number,   }, // Mathematics
       pq:{
-        cs: { type: Number, default: 0 }, // Communication Skills
-        lq: { type: Number, default: 0 }, // Logical Quotient
-        hack: { type: Number, default: 0 }, // Hackathons
-        coding: { type: Number, default: 0 }, // Coding Skills
-        ps: { type: Number, default: 0 }, // Public Speaking
+        cs: { type: Number,   }, // Communication Skills
+        lq: { type: Number,   }, // Logical Quotient
+        hack: { type: Number,   }, // Hackathons
+        coding: { type: Number,   }, // Coding Skills
+        ps: { type: Number,   }, // Public Speaking
         slc: { type: String, default: "" }, // Self-Learning Capability (yes/no)
         ec: { type: String, default: "" }, // Extra Courses
         certs: { type: String, default: "" }, // Certifications

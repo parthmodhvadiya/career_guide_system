@@ -2,15 +2,58 @@ import React, { useState } from "react";
 import { auth, googleProvider } from "../../firebase/firebase";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import {Button} from '@mui/material';
+import { 
+  Button, 
+  TextField, 
+  Paper, 
+  Typography, 
+  Box, 
+  CircularProgress,
+  Alert,
+  IconButton,
+  InputAdornment,
+  Divider
+} from '@mui/material';
+import { 
+  Google as GoogleIcon,
+  Visibility,
+  VisibilityOff,
+  Email as EmailIcon,
+  Lock as LockIcon
+} from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  maxWidth: 400,
+  width: '100%',
+  margin: theme.spacing(2),
+  borderRadius: 16,
+  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+}));
+
+const StyledForm = styled('form')(({ theme }) => ({
+  width: '100%',
+  marginTop: theme.spacing(1),
+}));
+
 const Auth = ({setFormData}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [Login,setLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   
   const navigate = useNavigate();
   
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -18,90 +61,163 @@ const Auth = ({setFormData}) => {
       localStorage.setItem('token', idToken);
       console.log(idToken);
       navigate('/');
-      alert("Logged in successfully!");
     } catch (error) {
-      alert(error.message);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const idToken = await user.getIdToken();
       localStorage.setItem('token', idToken);
       navigate('/profile');
-      alert("Signed up successfully!");
     } catch (error) {
-      alert(error.message);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError("");
     try {
       const userCredential = await signInWithPopup(auth, googleProvider);
       const user = userCredential.user;
       const idToken = await user.getIdToken();
       localStorage.setItem('token', idToken);
-      console.log(idToken);
       navigate('/');
-      alert("Logged in with Google!");
     } catch (error) {
-      alert(error.message);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">{Login?"Login":"SignUp"}</h2>
-        <div className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: 'background.default',
+        py: 4,
+      }}
+    >
+      <StyledPaper elevation={3}>
+        <Typography component="h1" variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
+          {isLogin ? 'Welcome Back' : 'Create Account'}
+        </Typography>
+        
+        {error && (
+          <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        <StyledForm onSubmit={isLogin ? handleLogin : handleSignUp}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EmailIcon color="primary" />
+                </InputAdornment>
+              ),
+            }}
           />
-          <input
-            type="password"
-            placeholder="Password"
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type={showPassword ? 'text' : 'password'}
+            id="password"
+            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockIcon color="primary" />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          {Login?<button
-            onClick={handleLogin}
-            className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2, py: 1.5 }}
+            disabled={loading}
           >
-            Login
-          </button>:
-          <button
-            onClick={handleSignUp}
-            className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-300"
-          >
-            Sign Up
-          </button>}
-          <button
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : isLogin ? (
+              'Sign In'
+            ) : (
+              'Sign Up'
+            )}
+          </Button>
+
+          <Divider sx={{ my: 2 }}>OR</Divider>
+
+          <Button
+            fullWidth
+            variant="outlined"
+            startIcon={<GoogleIcon />}
             onClick={handleGoogleLogin}
-            className="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-300 flex items-center justify-center"
+            disabled={loading}
+            sx={{ mb: 2 }}
           >
-            <svg
-              className="w-5 h-5 mr-2"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 488 512"
-              fill="currentColor"
-            >
-              <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
-            </svg>
-            Login with Google
-          </button>
-          {!Login?
-          <p className="justify-center items-center">If You have account? <Button onClick={()=>setLogin(true)}>Login</Button></p>
-          :<p>If You don't have account? <Button onClick={()=>setLogin(false)}>SignUp</Button></p>}
-        </div>
-      </div>
-    </div>
+            Continue with Google
+          </Button>
+
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
+              {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
+              <Button
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setError("");
+                }}
+                sx={{ textTransform: 'none' }}
+              >
+                {isLogin ? 'Sign Up' : 'Sign In'}
+              </Button>
+            </Typography>
+          </Box>
+        </StyledForm>
+      </StyledPaper>
+    </Box>
   );
 };
 

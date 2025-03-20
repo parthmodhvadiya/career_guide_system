@@ -9,34 +9,42 @@ const { uploadQuiz, getQuizList,getQuestions } = require("./routes/quiz.route");
 const connectDB = require("./config/db.config");
 const { saveScore, personalityQuiz } = require("./routes/saveMark.route");
 const {getScore} = require('./routes/getScore.route');
+const {predictJobRole} = require('./routes/quiz.route');
 
 const app = express();
 const PORT = 5000;
+
+// Connect to database
 connectDB();
+
+// Middleware
 app.use(express.json());
 app.use(cors());
-app.use(router);
-app.get("/api/jobs", async (req, res) => {
-  try {
-    const response = await axios.get("https://findwork.dev/api/jobs/", {
-      headers: {
-        Authorization: `Token 9f80308286177113e05064dfee2c75a3ba64c561`, // Replace with your API key
-      },
-    });
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch jobs" });
-  }
+
+// Routes
+app.post('/saveprofile', authenticate, saveProfile);
+app.get('/getprofiledetails', authenticate, getProfileDetails);
+app.post('/uploadquizzes', authenticate, uploadQuiz);
+app.get('/quiz', authenticate, getQuizList);
+app.get('/quiz/:name', authenticate, getQuestions);
+app.post('/quiz/:quiztype', authenticate, saveScore);
+app.post('/personal', authenticate, personalityQuiz);
+app.get('/getscore', authenticate, getScore);
+app.get('/predictjobrole', authenticate, predictJobRole);
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ 
+    error: 'Something went wrong!',
+    message: err.message 
+  });
 });
 
-app.post('/saveprofile',authenticate,saveProfile);
-app.get('/getprofiledetails',authenticate,getProfileDetails);
-app.post('/uploadquizzes',authenticate,uploadQuiz)
-app.get('/quiz',authenticate,getQuizList);
-app.get('/quiz/:name',authenticate,getQuestions);
-app.post('/quiz/:quiztype',authenticate,saveScore);
-app.post('/personal',authenticate,personalityQuiz);
-app.get('/getscore',authenticate,getScore);
+// Handle 404 routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
 app.listen(PORT, () => {
-  console.log(`Proxy server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

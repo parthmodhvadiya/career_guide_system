@@ -6,6 +6,7 @@ const saveScore = async (req, res) => {
   const email = req.userEmail;
   try {
     const user = await getUserIdformEMail(email);
+    console.log(user);
     const mark = await UserQuiz.findOne({ userID: user._id });
     if (!mark) {
       try {
@@ -52,9 +53,9 @@ async function personalityQuiz(req,res) {
         return res.json({ message: "Quiz data updated successfully", mark });
       } else {
         // Create new entry if not found
-        userQuiz = new UserQuiz({ userID, scores });
-        await userQuiz.save();
-        return res.status(201).json({ message: "Quiz data created successfully", userQuiz });
+        const newQuizEntry = new UserQuiz({ userID, scores: { pq: pq } });
+        await newQuizEntry.save();
+        return res.status(201).json({ message: "Quiz data created successfully", newQuizEntry });
       }
     } catch (error) {
       res.status(500).json({ error: "Server error", details: error.message });

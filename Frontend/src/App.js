@@ -17,34 +17,50 @@ import CareerQuizForm from "./components/customer/CareerForm/CareerQuizForm";
 import AboutPage  from "./components/customer/About";
 import Chatbot from './components/customer/Chatbot';
 import QuizResults from './components/customer/Marks';
+import JobPrediction from './components/customer/JobPrediction';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { Box } from '@mui/material';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+    background: {
+      default: '#f5f5f5',
+      paper: '#ffffff',
+    },
+  },
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    h1: {
+      fontWeight: 600,
+    },
+    h2: {
+      fontWeight: 600,
+    },
+    h3: {
+      fontWeight: 600,
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          borderRadius: 8,
+        },
+      },
+    },
+  },
+});
 
 const App = () => {
-  const expiryTime = 2*60*60*1000;
-  useEffect(() => {
-    function isTokenValid(token) {
-      try {
-          const base64Url = token.split('.')[1]; // Get payload
-          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-          const jsonPayload = JSON.parse(atob(base64));
-  
-          const now = Math.floor(Date.now() / 1000); // Current time in seconds
-          return jsonPayload.exp > now; // Check expiry
-      } catch (error) {
-          return false; // Invalid token
-      }
-  }
-  
-  const token = localStorage.token;
-  if(!isTokenValid(token))
-  {
-    localStorage.removeItem("token"); 
-  }
-  }, [])
-  
-  setTimeout(() => {
-    
-    localStorage.removeItem("token"); 
-  }, expiryTime);
+  const expiryTime = 2 * 60 * 60 * 1000; // 2 hours
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
@@ -55,29 +71,60 @@ const App = () => {
     country: "",
     skills: ""
   });
+
+  useEffect(() => {
+    function isTokenValid(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = JSON.parse(atob(base64));
+        const now = Math.floor(Date.now() / 1000);
+        return jsonPayload.exp > now;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    const token = localStorage.token;
+    if (!isTokenValid(token)) {
+      localStorage.removeItem("token");
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      localStorage.removeItem("token");
+    }, expiryTime);
+
+    return () => clearTimeout(timer);
+  }, [expiryTime]);
+
   return (
-    <Router>
-      <Navbar name={formData.fullName}/>
-      <Routes>
-        <Route path="/" element={<Home/>}/>
-          <Route path="/jobs" element={<Jobs/>}/>
-          <Route path="/quiz" element={<Quizpage/>}/>
-          <Route path="/quiz/:quizname" element={<Quiz />}/>
-          <Route path="/auth" element={<Auth setFormData={setFormData}/>}/>
-          <Route path="/profile" element={<UserProfile />}/>
-          <Route path="/profiledetails" element={<UserProfileDisplay user={formData.profile}/>}/>
-        <Route path='/about' element={<AboutPage/>}/>
-        <Route path="/chatbot" element={<Chatbot />} />
-        <Route path='/careerquiz' element={<CareerQuizForm/>}/>
-        <Route path='/marks' element={<QuizResults/>}/>
-        {/* <Route path="/" element={<Auth />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/quiz" element={<Quiz />} />
-        <Route path="/jobs" element={<JobListings />} />
-        <Route path="/resume" element={<ResumeBuilder />} /> */}
-      </Routes>
-      <Footer/>
-    </Router>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          <Navbar name={formData.fullName} />
+          <Box component="main" sx={{ flexGrow: 1, pt: 8 }}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/jobs" element={<Jobs />} />
+              <Route path="/quiz" element={<Quizpage />} />
+              <Route path="/quiz/:quizname" element={<Quiz />} />
+              <Route path="/auth" element={<Auth setFormData={setFormData} />} />
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/profiledetails" element={<UserProfileDisplay user={formData.profile} />} />
+              <Route path='/about' element={<AboutPage />} />
+              <Route path="/chatbot" element={<Chatbot />} />
+              <Route path='/quiz/personal/careerquiz' element={<CareerQuizForm />} />
+              <Route path='/marks' element={<QuizResults />} />
+              <Route path='/prediction' element={<JobPrediction />} />
+            </Routes>
+          </Box>
+          <Footer />
+        </Box>
+      </Router>
+    </ThemeProvider>
   );
 };
 

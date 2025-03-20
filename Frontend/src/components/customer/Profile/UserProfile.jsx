@@ -20,6 +20,7 @@ const UserProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
     const token = localStorage.token;
     const response = await fetch("http://localhost:5000/saveprofile", {
       method: "POST",

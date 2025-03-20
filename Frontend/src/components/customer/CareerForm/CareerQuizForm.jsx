@@ -2,10 +2,10 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useNavigate } from "react-router-dom";
 import PersonalDetails from "./PersonalDetails";
 import SkillsAssessment from "./SkillsAssessment";
 import CareerPreferences from "./CareerPreferences";
-// import { useNavigate } from "react-router-dom";
 
 const schema = yup.object().shape({
   cs: yup.number().min(0).max(100).required("Required"), // Communication Skills
@@ -23,35 +23,40 @@ const schema = yup.object().shape({
   teamwork: yup.string().required("Required"), // Worked in Teams
   job_role: yup.string().required("Required"), // Suggested Job Role
 });
-// const navigate = useNavigate();
-const handleDataOnSubmit = async (data)=>
-{
-    const token = localStorage.token;
-    const response = await fetch('http://localhost:5000/personal',{
-        method:"POST",
-        headers:{
-            "Content-Type": "application/json",
-            authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(data ),
-    }
-)
-console.log(await response.json());
-}
 
 const CareerQuizForm = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
 
+  const handleDataOnSubmit = async (data) => {
+    try {
+      const token = localStorage.token;
+      const response = await fetch('http://localhost:5000/personal', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(data),
+      });
+      
+      const result = await response.json();
+      console.log(result);
+      
+      // After successful submission, navigate to the quiz component
+      navigate('/careerquiz');
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Error submitting form. Please try again.");
+    }
+  };
+
   const onSubmit = (data) => {
-    handleDataOnSubmit(data)
-    console.log("User Data:", data);
-    alert("Form submitted successfully!");
-    // navigate('/quiz');
-    // Send data to backend via fetch/axios
+    handleDataOnSubmit(data);
   };
 
   return (
@@ -63,9 +68,9 @@ const CareerQuizForm = () => {
         <CareerPreferences register={register} errors={errors} />
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded-md mt-4 hover:bg-blue-600"
+          className="w-full bg-blue-500 text-white p-2 rounded-md mt-4 hover:bg-blue-600 transition-colors"
         >
-          Submit
+          Submit and Continue to Quiz
         </button>
       </form>
     </div>
